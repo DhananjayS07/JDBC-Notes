@@ -1,0 +1,250 @@
+📌 Jdbc Notes by Dhananjay💙🙏
+
+------------JDBC Notes------------
+
+📌When you execute an SQL INSERT statement in Java, as in your code snippet, the database handles the process of inserting data into the specified table. The Java code you provided inserts data into the "student" table. Here's a breakdown of the relevant parts:
+
+Make sure you have the MySQL JDBC driver JAR file in your classpath of eclipse. If you don't have it, you can download it from the official MySQL website: https://dev.mysql.com/downloads/connector/j/
+The MySQL Connector/J is a JDBC (Java Database Connectivity) driver for MySQL databases. It enables Java applications to interact with MySQL databases by providing an implementation of the JDBC API.
+
+1)Load driver class:
+
+Code:
+Class.forName("com.mysql.cj.jdbc.Driver");
+
+The correct class name for the MySQL JDBC driver is usually "com.mysql.cj.jdbc.Driver" and not "com.mysql.dj.jdbc.Driver."
+
+2)Connection Establishment:
+
+Code:
+Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "root");
+
+In this line, you establish a connection to the MySQL database named "test" on the local machine. The username and password for the connection are "root" and "root," respectively.
+
+3)SQL Statement:
+
+Code:
+String sql = "insert into student values(1,'xyz','Karvenagar')";
+
+This SQL statement inserts a new record into the "student" table. It specifies the values for the columns in the order they appear in the table: id, name, and address. In this case, the values are 1, 'xyz', and 'Karvenagar', respectively.
+
+4)Statement Execution:
+
+Code:
+Statement smt = con.createStatement();
+smt.execute(sql);
+
+These lines create a Statement object and execute the SQL statement using execute(sql). This sends the SQL command to the database for execution.
+
+5)Closing Resources:
+
+Code:
+smt.close();
+con.close();
+
+After execution, it's essential to close the Statement and Connection objects to release resources.
+
+Inside the database, the database engine (in this case, MySQL) processes the INSERT statement and inserts the specified data into the "student" table. The database engine understands the structure of the table based on the provided SQL statement and ensures that the data is inserted into the correct columns.
+
+
+📌-------Basic code----
+
+package com.dj;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+public class Test {
+
+	public static void main(String[] args)throws Exception {
+		// TODO Auto-generated method stub
+		Class.forName("com.mysql.cj.jdbc.Driver"); //Load driver class
+		
+		//establish connection with db
+		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","Root");;
+	     
+		//construct sql qurey
+		String sql="insert into student values(2,'abc','Ahmednagar')";
+		
+		//create object of statement
+		Statement smt=con.createStatement();
+		
+		//excute qurey
+		smt.execute(sql);
+		
+		//close statement or resources
+		smt.close();
+		
+		//close connection
+		con.close();
+
+	}
+
+}
+
+
+📌--------------Entry as per user input------------
+
+package com.dj;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class jdbctest {
+
+	public static void main(String[] args)throws Exception {
+		// TODO Auto-generated method stub
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		
+		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","Root");
+		
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter the RollNo");
+		int roll=sc.nextInt();
+		System.out.println("enter the Name");
+		String name=sc.next();
+		System.out.println("Enter the Address");
+		String Address=sc.next();
+		String sql="Insert into student values("+roll+",'"+name+"','"+Address+"')";
+		System.out.println(sql);
+		
+		Statement smt=con.createStatement();
+		
+		smt.execute(sql);
+		smt.close();
+		sc.close();
+		con.close();
+
+	}
+
+}
+
+
+📌--------------------------To display complete table inside db--------
+
+package com.dj;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class Jdbctesta {
+
+	public static void main(String[] args)throws Exception  {
+		// TODO Auto-generated method stub
+
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		
+		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","Root");
+		
+		String sql="select * from student";
+		System.out.println(sql);
+		
+		Statement smt=con.createStatement();
+		
+		ResultSet rs=smt.executeQuery(sql);
+		while(rs.next())
+		{
+			System.out.println(rs.getInt(1));
+			System.out.println(rs.getString(2));
+			System.out.println(rs.getString(3));
+		}
+	}
+
+}
+
+📌---------------Insert data by using prepared statement ------
+
+package com.dj;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+public class Jdbctestb {
+
+	public static void main(String[] args)throws Exception {
+		// TODO Auto-generated method stub
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		
+		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","Root");
+        
+		String sql="insert into student values(?,?,?)";
+		
+		PreparedStatement ps=con.prepareStatement(sql);
+		ps.setInt(1, 3);
+		ps.setString(2,"aaa");
+		ps.setString(3, "karvenagar");
+		ps.execute();
+		ps.close();
+		
+		con.close();
+	}
+
+}
+
+
+
+
+
+
+
+📌-----Difference---
+
+statement                                                                             preparedstatement
+through 1 object of statement we can submit multile sql qurey                 through 1 object of prepared statement we can submit only one sql qurey
+through statement sql qurey get compiled multple time                         through prepared statement sql qurey will get compile only one time
+through statement sql qurey required more string concatention                 through prepared statement sql qurey did not required string concatention
+
+String query="create table Company("+"id int,"+"name varchar(50),"+"desig varchar(50),"+"salary int)";
+
+
+Question
+public class employee
+{
+   private id,name,desig,salary
+}
+
+public class Information
+{
+   public void createTable()
+   public void addEmployee()
+               viewSingle Employee()
+               viewAll Employee()
+               deletesingleemployee()
+               updateemployee()
+               deleteTable()
+}
+
+public class Test
+{
+  call all method with the help of switch
+}
+
+
+📌-------Try with Resources-----
+This feature is added in jdk 1.7
+Resorces will gets closed automatically in private resources so memory leakage problem overcome
+Autoclosable interface is added in jdk 1.7
+we can only use those interface and classes which used to internally & externally Autoclosable interface.
+
+
+
+📌If they given different databases like oracle just we change url present inside connection to database, it will be provided by project
+only value inside the string will be going to change in the code of jdbc all the things are provided inside document.
+
+📌Callable Satatement:
+If there is stored procedure to call it then we required callable statement
+in the logical operation we can use store procedure
+bunch of qurey is used inside store procedure
+
+-It is precompile sql qurey
+-through store procedure we can submit bunch of sql qurey
+-It is used also for excuting some arithmatic operations.
+ 
